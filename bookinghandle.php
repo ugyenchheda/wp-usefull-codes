@@ -1,4 +1,50 @@
 //function to save reservation data into postmeta
+
+function display_event_booking_meta_box($post)
+{
+	$booking_details = get_post_meta($post->ID, 'booking_details', true);
+	$booking_details = isset($booking_details) ? esc_textarea($booking_details) : '';
+	?>
+	<?php
+	$settings = array(
+		'textarea_name' => 'booking_details',
+		'textarea_rows' => 20,
+		'teeny' => true,
+	);
+	echo wp_editor($booking_details, 'booking_details', $settings);
+}
+
+
+add_action('save_post', 'save_event_booking_details');
+function save_event_booking_details($post_id)
+{
+	if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+		return;
+	}
+	
+	if (!current_user_can('edit_post', $post_id)) {
+		return;
+	}
+
+	if (get_post_type($post_id) !== 'events') {
+		return;
+	}
+	
+	$booking_details = isset($_POST['booking_details']) ? sanitize_textarea_field($_POST['booking_details']) : '';
+	
+	update_post_meta($post_id, 'booking_details', $booking_details);
+}
+
+function custom_booking_made_action($post_id)
+{
+    echo '<script type="text/javascript">alert("Booking for event ID ' . $post_id . ' has been made!");</script>';
+}
+add_action('booking_made', 'custom_booking_made_action');
+
+
+add_action('wp_ajax_submit_event_booking', 'handle_event_booking');
+add_action('wp_ajax_nopriv_submit_event_booking', 'handle_event_booking');
+
 function handle_event_booking() {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         wp_send_json_error('Invalid request method.');
