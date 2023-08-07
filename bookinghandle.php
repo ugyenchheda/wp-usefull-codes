@@ -1,3 +1,4 @@
+<?php 
 //function to save reservation data into postmeta
 
 function display_event_booking_meta_box($post)
@@ -109,6 +110,7 @@ function handle_event_booking() {
 
     wp_send_json_error('Booking details not provided.');
 }
+	?>
 
           //html form
 
@@ -155,7 +157,7 @@ function handle_event_booking() {
                         </div>          
                         <span class='event-textarea'></span>                                                 
                     </form>
-
+<script>
           // ajax javascript
               $('#event-booking-form').submit(function(event) {
         event.preventDefault();
@@ -208,3 +210,4 @@ function handle_event_booking() {
           },
         });
       });
+</script>
