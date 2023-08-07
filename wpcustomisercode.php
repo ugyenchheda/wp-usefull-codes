@@ -1,3 +1,4 @@
+<?php 
 // code to be added in customizer.php
 
 	$wp_customize->add_panel('nepaleseinfinland_setting_panel', array(
@@ -79,7 +80,7 @@
 			 'settings'	=> 'news_number',
 			)
 	);
-
+?>
 //call the parameters on frontend
 
 					        <?php $homepage_news_title = get_theme_mod('hompage_news_title');?>
