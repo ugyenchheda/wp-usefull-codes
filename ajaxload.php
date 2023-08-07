@@ -1,5 +1,5 @@
 //function
-
+<?php 
 function loadingNews() {
     $homepage_news_category = $_POST['homepage_news_category'];
     $no_of_news_hp = $_POST['no_of_news_hp'];
@@ -62,9 +62,9 @@ function loadingNews() {
 		wp_send_json(array('content' => $response, 'max_pages' => $max_pages));
 	}
 
-
+?>
 //javascript code
-
+<script>
 jQuery(document).ready(function() {
     var currentPage = 1;
     var maxPages = 1; // Initialize maxPages to 1
@@ -120,7 +120,7 @@ jQuery(document).ready(function() {
             });
         }
     });
-
+		       </script>
 //html
     <section class="all-post-area">
         <div class="container">
