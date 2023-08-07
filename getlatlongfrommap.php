@@ -1,4 +1,4 @@
-//function to fetch lat lng from google map
+<?php //function to fetch lat lng from google map
 function event_location($latitude,$longitude) {
 	//Google Map API URL
 	$API_KEY = get_theme_mod('google_map_api'); // Google Map Free API Key
@@ -36,7 +36,7 @@ function event_location($latitude,$longitude) {
       'split_values' => true, 
       'api_key' => $API_KEY, 
     ) )
-
+?>
 //frontend for map rendering
                     <div id="map" style="height: 502px;" class="kindergarden_map"></div>
 	                <?php $API_KEY = get_theme_mod('google_map_api'); ?>
