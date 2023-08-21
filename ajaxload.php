@@ -1,5 +1,7 @@
 //function
 <?php 
+add_action('wp_ajax_loadingNews', 'loadingNews');
+add_action('wp_ajax_nopriv_loadingNews', 'loadingNews');
 function loadingNews() {
     $homepage_news_category = $_POST['homepage_news_category'];
     $no_of_news_hp = $_POST['no_of_news_hp'];
@@ -211,3 +213,121 @@ jQuery(document).ready(function() {
             <?php }; ?>
         </div>
     </section>
+
+// another example:
+// add this code to function.php
+<?php
+add_action('wp_ajax_loadingNews', 'loadingNews');
+add_action('wp_ajax_nopriv_loadingNews', 'loadingNews');
+function loadingNews() {
+    $page = isset($_POST['page']) ? intval($_POST['page']) : 1;
+    $loaded_post_ids = isset($_POST['loaded_post_ids']) ? $_POST['loaded_post_ids'] : array();
+
+    $args = array(
+        'posts_per_page' => 1,
+        'post_type'      => 'post',
+        'orderby' => 'date',
+        'order' => 'DESC',
+        'post__not_in' => $loaded_post_ids,
+		'offset' => 2,
+    );
+
+    $query = new WP_Query($args);
+
+    ob_start();
+
+    if ($query->have_posts()) {
+        while ($query->have_posts()) {
+            $query->the_post();
+            $loaded_post_ids[] = get_the_ID();
+            echo '<div class="col-md-6">
+                    <a href="' . get_the_permalink() . '" class="blog-box">
+                      <div class="blog-image">
+                      ' . get_the_post_thumbnail(get_the_ID(), 'post_image_xl', array('class' => 'alignleft')) . '
+                        <div class="blog-icon">
+                          <i class="bi bi-journal-text"></i>
+                        </div>
+                      </div>
+                      <div class="blog-post-content">
+                        <h6 class="blog-header">' . get_the_title() . '</h6>
+                        <div class="blog-dates">
+                          <span>' . get_the_date() . '</span>
+                        </div>
+                        <p class="mb-0">' . get_the_excerpt() . '</p>
+                      </div>
+                    </a>
+                  </div>';
+        }
+        wp_reset_postdata();
+    }
+
+    $response = ob_get_clean();
+    $max_pages = $query->max_num_pages;
+
+    wp_send_json(array('content' => $response, 'max_pages' => $max_pages));
+}
+?>
+//add this code to your js file.
+<script>
+
+jQuery(document).ready(function() {
+    var currentPage = 1;
+    var maxPages = 1; // Initialize maxPages to 1
+    var loading = false;
+    var noMorePosts = false; // Flag to track if there are no more posts
+
+    jQuery('#fully-loaded').hide();
+
+    jQuery(document).on('click', '#load-more-news', function() {
+        if (!loading && !noMorePosts && currentPage <= maxPages) {
+            loading = true;
+            var nextPage = currentPage + 1;
+            var ajaxurl = my_ajax_object.ajax_url;
+            var loadedPostIds = [];
+
+            var $appendContainer = jQuery('#append-here');
+
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'loadingNews',
+                    page: nextPage,
+                    no_of_news_hp: my_ajax_object.no_of_news_hp,
+                    loaded_post_ids: loadedPostIds,
+                },
+                beforeSend: function() {
+                    $('#load-more-news').html('<span>Loading <i class="fa fa-spinner fa-spin"></i></span>');
+                },
+                success: function(response) {
+                    $('#load-more-news').text('Load More');
+                    if (response.content) {
+                        $appendContainer.append(response.content);
+                        currentPage = nextPage;
+                        loading = false;
+                        loadedPostIds = response.loaded_post_ids;
+
+                        if (currentPage >= response.max_pages) {
+                            noMorePosts = true; // No more posts to load
+                            jQuery('#load-more-news').hide();
+                            jQuery('#fully-loaded').show();
+                        }
+
+                        maxPages = response.max_pages;
+                    } else {
+                        noMorePosts = true; // No more posts to load
+                        jQuery('#load-more-news').hide();
+                        jQuery('#fully-loaded').show();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log(xhr.responseText);
+                    loading = false;
+                }
+            });
+        }
+    });
+});
+</script>
+
+
