@@ -329,5 +329,48 @@ jQuery(document).ready(function() {
     });
 });
 </script>
-
+//add this file to your html
+ <section id="blog" class="section blog">
+	<div class="container">
+	  <h3 class="subtitle">Latest News</h3>
+	  <div class="boxes">
+		<div class="row vertical-line" id="append-here">
+			<?php 
+				$args = array(
+						'post_type' => 'post', 
+						'posts_per_page' => '2',
+					);
+				$query = new WP_Query($args);
+				if ($query->have_posts()) {
+					while ($query->have_posts()) {
+						$query->the_post();
+						echo '<div class="col-md-6">
+							<a href="' . get_the_permalink() . '" class="blog-box">
+							<div class="blog-image">
+							' . get_the_post_thumbnail(get_the_ID(), 'post_image_xl', array('class' => 'alignleft')) . '
+								<div class="blog-icon">
+								<i class="bi bi-journal-text"></i>
+								</div>
+							</div>
+							<div class="blog-post-content">
+								<h6 class="blog-header">' . get_the_title() . '</h6>
+								<div class="blog-dates">
+								<span>' . get_the_date() . '</span>
+								</div>
+								<p class="mb-0">' . get_the_excerpt() . '</p>
+							</div>
+							</a>
+						</div>';
+					}
+				}
+				wp_reset_postdata(); // Restore original post data
+			?>
+		</div>
+	  </div>
+		<div class="load-more-containerv text-center">
+			<button id="load-more-news" class="primary-button">View More Posts</button>
+			<p id="fully-loaded">That's all for now &#128522.</p>
+		</div>
+	</div>
+  </section>
 
