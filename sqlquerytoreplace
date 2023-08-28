@@ -1,1 +1,9 @@
+UPDATE tableprefix_options SET option_value = REPLACE(option_value, 'tobereplaced', 'replacetotext');
 
+UPDATE tableprefix_posts SET post_content = REPLACE(post_content, 'tobereplaced', 'replacetotext');
+
+UPDATE tableprefix_postmeta SET meta_value = REPLACE(meta_value, 'tobereplaced', 'replacetotext');
+
+UPDATE tableprefix_comments SET comment_content = REPLACE(comment_content, 'tobereplaced', 'replacetotext');
+
+UPDATE tableprefix_comments SET comment_author_url = REPLACE(comment_author_url, 'tobereplaced', 'replacetotext');
